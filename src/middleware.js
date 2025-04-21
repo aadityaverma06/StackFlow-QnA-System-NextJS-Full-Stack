@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-
-export function middleware(request) {
-  return NextResponse.redirect(new URL("/home", request.url));
+import  getOrCreateDB  from "./models/server/dbConnect.js";
+import  getOrCreateStorage  from "./models/server/storageConnect.js";
+export async function middleware(request) {
+  await Promise.all([getOrCreateDB(), getOrCreateStorage()]);
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/about/:path*",
+  matcher: "/",
 };

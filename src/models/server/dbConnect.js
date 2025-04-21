@@ -14,12 +14,10 @@ export default async function getOrCreateDB() {
     try {
       await databases.create(db, db);
       console.log("Database Created");
-      await Promise.all([
-        createQuestionCollection(),
-        createAnswerCollection(),
-        createCommentCollection(),
-        createVoteCollection(),
-      ]);
+      await createQuestionCollection();
+      await createAnswerCollection();
+      await createCommentCollection();
+      await createVoteCollection();
       console.log("Collection created");
       console.log("Database connected");
     } catch (error) {

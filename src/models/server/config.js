@@ -1,5 +1,5 @@
 import env from "@/env.js";
-import { Avatar, Client, Databases, Storage, Users } from "node-appwrite";
+import { Avatars, Client, Databases, Storage, Users } from "node-appwrite";
 
 let client = new Client();
 
@@ -9,7 +9,7 @@ client
   .setKey(env.appwrite.apiKey);
 
 const databases = new Databases(client);
-const avatars = new Avatar(client);
+const avatars = new Avatars(client);
 const storage = new Storage(client);
 const users = new Users(client);
 
