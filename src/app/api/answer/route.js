@@ -1,4 +1,4 @@
-import { answerCollection, db } from "@/models/name";
+import { answerCollection, db } from "@/models/collectionNames";
 import { databases, users } from "@/models/server/config";
 import { NextRequest, NextResponse } from "next/server";
 import { ID } from "node-appwrite";

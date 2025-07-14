@@ -1,12 +1,11 @@
-import env from "@/env.js";
 import { Avatars, Client, Databases, Storage, Users } from "node-appwrite";
 
 let client = new Client();
 
 client
-  .setEndpoint(env.appwrite.endpoint)
-  .setProject(env.appwrite.projectId)
-  .setKey(env.appwrite.apiKey);
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_HOST_URL)
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID)
+  .setKey(process.env.APPWRITE_API_KEY);
 
 const databases = new Databases(client);
 const avatars = new Avatars(client);

@@ -1,4 +1,4 @@
-import { voteCollection } from "@/models/name";
+import { voteCollection } from "@/models/collectionNames";
 import { databases } from "@/models/server/config";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(request) {

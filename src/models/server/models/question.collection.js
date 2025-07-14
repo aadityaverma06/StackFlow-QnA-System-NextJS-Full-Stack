@@ -1,5 +1,5 @@
-import { db, questionCollection } from "../name.js";
-import { databases } from "./config.js";
+import { db, questionCollection } from "../../collectionNames.js";
+import { databases } from "../config.js";
 import { IndexType, Permission } from "node-appwrite";
 
 export default async function createQuestionCollection() {

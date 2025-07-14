@@ -1,4 +1,4 @@
-const db = "fullStackQnASystem";
+const db = "QnA-System-NextJs-Full-Stack";
 const questionCollection = "questions";
 const answerCollection = "answers";
 const commentCollection = "comments";

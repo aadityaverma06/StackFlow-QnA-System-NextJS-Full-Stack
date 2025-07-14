@@ -1,5 +1,5 @@
-import { db, commentCollection } from "../name.js";
-import { databases } from "./config.js";
+import { db, commentCollection } from "../../collectionNames.js";
+import { databases } from "../config.js";
 import { Permission } from "node-appwrite";
 
 export default async function createcommentCollection() {
@@ -10,7 +10,7 @@ export default async function createcommentCollection() {
     Permission.update("users"),
     Permission.delete("users"),
   ]);
-  
+
   console.log("Comment Collection Created");
 
   await Promise.all([
@@ -37,6 +37,6 @@ export default async function createcommentCollection() {
       true
     ),
   ]);
-  
+
   console.log("Comment Collection Attributes Created");
 }

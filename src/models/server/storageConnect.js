@@ -1,5 +1,5 @@
 import { Permission } from "node-appwrite";
-import { questionAttachmentBucket } from "../name";
+import { questionAttachmentBucket } from "../collectionNames";
 import { storage } from "./config.js";
 
 export default async function getOrCreateStorage() {

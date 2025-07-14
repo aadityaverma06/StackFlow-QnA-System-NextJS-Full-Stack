@@ -1,5 +1,5 @@
-import { db, answerCollection } from "../name.js";
-import { databases } from "./config.js";
+import { db, answerCollection } from "../../collectionNames.js";
+import { databases } from "../config.js";
 import { Permission } from "node-appwrite";
 
 export default async function createAnswerCollection() {
@@ -28,14 +28,8 @@ export default async function createAnswerCollection() {
       50,
       true
     ),
-    databases.createStringAttribute(
-      db,
-      answerCollection,
-      "authorId",
-      50,
-      true
-    ),
+    databases.createStringAttribute(db, answerCollection, "authorId", 50, true),
   ]);
-  
+
   console.log("Answer Attributes Created");
 }

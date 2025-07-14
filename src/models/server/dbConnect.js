@@ -1,8 +1,8 @@
-import { db } from "../name.js";
-import createAnswerCollection from "./answer.collection.js";
-import createCommentCollection from "./comment.collection.js";
-import createQuestionCollection from "./question.collection.js";
-import createVoteCollection from "./vote.collection.js";
+import { db } from "../collectionNames.js";
+import createAnswerCollection from "./models/answer.collection.js";
+import createCommentCollection from "./models/comment.collection.js";
+import createQuestionCollection from "./models/question.collection.js";
+import createVoteCollection from "./models/vote.collection.js";
 
 import { databases } from "./config.js";
 
@@ -18,7 +18,7 @@ export default async function getOrCreateDB() {
       await createAnswerCollection();
       await createCommentCollection();
       await createVoteCollection();
-      console.log("Collection created");
+      console.log("Collections created");
       console.log("Database connected");
     } catch (error) {
       console.log("Error creating databases or collection", error);
