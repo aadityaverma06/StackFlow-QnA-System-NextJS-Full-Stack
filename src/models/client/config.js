@@ -1,9 +1,8 @@
 import { Client, Account, Avatars, Databases, Storage } from "appwrite";
-import env from "@/env.js";
 
 const client = new Client()
-  .setEndpoint(env.appwrite.endpoint)
-  .setProject(env.appwrite.projectId);
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_HOST_URL)
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
 
 const account = new Account(client);
 const avatars = new Avatars(client);

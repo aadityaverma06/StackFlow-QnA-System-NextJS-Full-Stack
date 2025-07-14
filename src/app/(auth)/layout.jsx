@@ -8,7 +8,7 @@ import { useEffect } from "react";
 const Layout = ({ children }) => {
   const { session } = useAuthStore();
   const router = useRouter();
-  useeffect(
+  useEffect(
     () => {
       if (session) {
         router.push("/");
