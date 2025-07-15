@@ -13,23 +13,20 @@ export default async function createAnswerCollection() {
 
   console.log("Answer Collection Created");
 
-  await Promise.all([
-    databases.createStringAttribute(
-      db,
-      answerCollection,
-      "content",
-      10000,
-      true
-    ),
-    databases.createStringAttribute(
-      db,
-      answerCollection,
-      "questionId",
-      50,
-      true
-    ),
-    databases.createStringAttribute(db, answerCollection, "authorId", 50, true),
-  ]);
-
-  console.log("Answer Attributes Created");
+  await databases.createStringAttribute(
+    db,
+    answerCollection,
+    "content",
+    10000,
+    true
+  );
+  await databases.createStringAttribute(
+    db,
+    answerCollection,
+    "questionId",
+    50,
+    true
+  );
+  databases.createStringAttribute(db, answerCollection, "authorId", 50, true),
+    console.log("Answer Attributes Created");
 }
