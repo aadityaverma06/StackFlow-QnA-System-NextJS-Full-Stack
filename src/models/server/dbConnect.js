@@ -1,8 +1,8 @@
 import { db } from "../collectionNames.js";
-import createAnswerCollection from "./models/answer.collection.js";
-import createCommentCollection from "./models/comment.collection.js";
-import createQuestionCollection from "./models/question.collection.js";
-import createVoteCollection from "./models/vote.collection.js";
+import createAnswerCollection from "./collections/answer.collection.js";
+import createCommentCollection from "./collections/comment.collection.js";
+import createQuestionCollection from "./collections/question.collection.js";
+import createVoteCollection from "./collections/vote.collection.js";
 
 import { databases } from "./config.js";
 
