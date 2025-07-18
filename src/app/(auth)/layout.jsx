@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/store/Auth";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useEffect } from "react";
 
@@ -13,17 +13,17 @@ const Layout = ({ children }) => {
       if (session) {
         router.push("/");
       }
+      
     },
-    [session],
-    [router]
+    [session, router]
   );
 
   if (session) return;
 
   if (!session) {
     return (
-      <div className="">
-        <div className="">{children}</div>
+      <div>
+        <div>{children}</div>
       </div>
     );
   }
