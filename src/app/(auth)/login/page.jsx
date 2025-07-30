@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Router } from "lucide-react";
 
 function login() {
   const { login } = useAuthStore();
@@ -92,6 +91,7 @@ function login() {
           variant="default"
           disabled={disabled}
           className="bg-[#4a00e0] hover:bg-[#4a00e0]/90"
+          onClick={() => router.push("/askquestion")}
         >
           Login
         </Button>

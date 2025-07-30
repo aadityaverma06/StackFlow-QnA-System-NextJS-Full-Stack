@@ -46,7 +46,7 @@ export default async function createQuestionCollection() {
   await databases.createStringAttribute(
     db,
     questionCollection,
-    "attachmentId",
+    "Image",
     50,
     false
   );
