@@ -1,5 +1,6 @@
 import { answerCollection, db } from "@/models/collectionNames";
 import { databases, users } from "@/models/server/config";
+import { useAuthStore } from "@/store/Auth";
 import { NextRequest, NextResponse } from "next/server";
 import { ID } from "node-appwrite";
 
@@ -7,7 +8,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const { questionId, answer, authorId } = body;
-    const response = databases.createDocument(
+    const response = await databases.createDocument(
       db,
       answerCollection,
       ID.unique(),
@@ -17,11 +18,11 @@ export async function POST(request) {
         authorId: authorId,
       }
     );
-    const prefs = await users.getPrefs(authorId);
-    await users.updatePrefs({
-      reputation: Number(prefs.reputation + 1),
+    let prefs = await users.getPrefs(authorId);
+    await users.updatePrefs(authorId, {
+      reputation: Number(prefs.reputation) + 1,
     });
-    return NextResponse.json({ response, status: 200 });
+    return NextResponse.json({ prefs, status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message, status: 500 });
   }

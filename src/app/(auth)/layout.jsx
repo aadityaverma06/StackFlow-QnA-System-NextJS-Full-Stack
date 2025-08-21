@@ -1,26 +1,37 @@
 "use client";
 
 import { useAuthStore } from "@/store/Auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useEffect } from "react";
 
 const Layout = ({ children }) => {
   const { session } = useAuthStore();
   const router = useRouter();
-  useEffect(
-    () => {
+  const pathname = usePathname();
+  const redirectUrl = useSearchParams()?.get("redirectUrl");
+  const question = useSearchParams()?.get("question");
+  useEffect(() => {
+    if (pathname != "/logout") {
       if (session) {
-        router.push("/");
+        if (redirectUrl && question) {
+          router.push(`/question/${decodeURIComponent(redirectUrl)}`);
+        } else if (redirectUrl && !question) {
+          router.push(decodeURIComponent(`/${redirectUrl}`));
+        } else {
+          router.push("/home");
+        }
       }
-      
-    },
-    [session, router]
-  );
+    }
+  }, [session, router]);
 
-  if (session) return;
+  if (pathname != "/logout") {
+    if (session) {
+      return;
+    }
+  }
 
-  if (!session) {
+  if (!session || pathname == "/logout") {
     return (
       <div>
         <div>{children}</div>

@@ -47,7 +47,7 @@ export default async function createQuestionCollection() {
     db,
     questionCollection,
     "Image",
-    50,
+    500,
     false
   );
   console.log("Question Attributes Created");

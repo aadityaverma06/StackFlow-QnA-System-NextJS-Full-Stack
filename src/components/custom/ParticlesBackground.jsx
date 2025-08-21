@@ -12,7 +12,7 @@ function ParticlesBackground({ quantity = 1000 }) {
   return (
     <Particles
       className="absolute inset-0 z-0"
-      quantity={1000}
+      quantity = {quantity}
       ease={80}
       color={color}
     />

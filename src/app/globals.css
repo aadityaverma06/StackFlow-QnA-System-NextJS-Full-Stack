@@ -178,10 +178,6 @@
   }
 }
 
-.authformiputs {
-  @apply flex flex-col gap-4;
-}
-
 body .w-md-editor-text-pre > code,
 body .w-md-editor-text-input {
   font-size: 20px !important;

@@ -5,13 +5,90 @@ import { links } from "@/utils/navbarLinks.js";
 import { Input } from "@/components/ui/inputAceternity.jsx";
 import MarkdownEditor from "@/components/ui/MarkdownEditor.jsx";
 import dynamic from "next/dynamic";
-import ParticlesBackground  from "@/components/custom/ParticlesBackground";
+import ParticlesBackground from "@/components/custom/ParticlesBackground";
+import { useAuthStore } from "@/store/Auth";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { databases, storage } from "@/models/client/config";
+import { ID } from "appwrite";
+import {
+  db,
+  questionAttachmentBucket,
+  questionCollection,
+} from "@/models/collectionNames";
+import toast from "react-hot-toast";
+import useMarkdownEditorValueStore from "@/store/MarkdownEditorValue";
+
 const AnimatedGridPattern = dynamic(
   () => import("@/components/magicui/animated-grid-pattern.jsx"),
   { ssr: false }
-)
+);
 
 function askquestion() {
+  const redirectUrl = useSearchParams()?.get("redirectUrl");
+  const { value, setValue } = useMarkdownEditorValueStore();
+  const [title, setTitle] = useState("");
+  const [image, setImage] = useState("");
+  const [tag, setTag] = useState("");
+  const [tags, setTags] = useState([]);
+  const { session, user } = useAuthStore();
+  const imgRef = useRef(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      router.push(`/login/?redirectUrl=${encodeURIComponent("askquestion")}`);
+    }
+  });
+
+  if (!session) return;
+
+  function handleAddTag() {
+    if (tag) {
+      setTags([...tags, tag]);
+      setTag("");
+    }
+  }
+
+  async function handlePublish() {
+    if (!user) {
+      toast.error("You are not logged in");
+      return;
+    }
+    try {
+      const imageUpload = await storage.createFile(
+        questionAttachmentBucket,
+        ID.unique(),
+        image
+      );
+      const imageUrl = storage.getFileView(
+        questionAttachmentBucket,
+        imageUpload.$id
+      );
+      const question = await databases.createDocument(
+        db,
+        questionCollection,
+        ID.unique(),
+        {
+          title,
+          content: value,
+          authorId: user.$id,
+          tags,
+          Image: imageUrl,
+        }
+      );
+      toast.success("Question Published Successfully");
+      console.log(tags);
+      setTitle("");
+      setValue("");
+      imgRef.current.value = "";
+      setImage("");
+      setTags([]);
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
+  }
   const BottomGradient = () => {
     return (
       <>
@@ -30,7 +107,14 @@ function askquestion() {
         className="row-start-1 col-start-1 md:row-start-2 md:col-span-2"
         title="Ask a question"
         description="Be specfic about your question."
-        customField={<Input type="text" placeholder="Title" />}
+        customField={
+          <Input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        }
       />
       <AskQuestionPageContainer
         className="row-start-2 col-start-1 md:row-start-3 md:col-span-2"
@@ -46,6 +130,9 @@ function askquestion() {
           <Input
             type="file"
             className="file:text-gray-400 file:cursor-pointer cursor-pointer"
+            accept=".jpg,.jpeg,.png"
+            onChange={(e) => setImage(e.target.files[0])}
+            ref={imgRef}
           />
         }
       />
@@ -55,14 +142,33 @@ function askquestion() {
         description="Add some tags which can relate to your question."
         customField={
           <div className="grid grid-cols-[1fr_100px] grid-rows-1 gap-4">
-            <Input type="text" placeholder="Enter Tags (eg. Js, React etc)" />
+            <Input
+              type="text"
+              placeholder="Enter Tags (eg. Js, React etc)"
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+              className="col-start-1 row-start-1"
+            />
             <button
-              className="group/btn relative block h-full rounded-lg bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] pl-4 pr-4 cursor-pointer"
+              className="group/btn relative block h-full rounded-lg bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] pl-4 pr-4 cursor-pointer col-start-2 row-start-1"
               type="button"
+              onClick={handleAddTag}
             >
               Add
               <BottomGradient />
             </button>
+            {tags.length > 0 && (
+              <div className="col-start-1 row-start-2 flex flex-wrap gap-2">
+                {tags.map((tag, index) => (
+                  <button
+                    key={index}
+                    className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-md hover:bg-zinc-900 cursor-pointer transition duration-100"
+                  >
+                    {`#${tag}`}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         }
       />
@@ -70,6 +176,7 @@ function askquestion() {
         <button
           className="group/btn relative block h-full rounded-lg w-[200px] bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] cursor-pointer p-4"
           type="button"
+          onClick={handlePublish}
         >
           Publish
           <BottomGradient />

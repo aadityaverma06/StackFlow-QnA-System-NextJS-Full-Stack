@@ -2,9 +2,10 @@
 
 import React from "react";
 import MDEditor from "@uiw/react-md-editor";
+import useMarkdownEditorValueStore from "@/store/MarkdownEditorValue";
 
 export default function MarkdownEditor() {
-  const [value, setValue] = React.useState("**Hello world!!!**");
+  const { value, setValue } = useMarkdownEditorValueStore();
   return (
     <div className="container">
       <MDEditor value={value} onChange={setValue} />

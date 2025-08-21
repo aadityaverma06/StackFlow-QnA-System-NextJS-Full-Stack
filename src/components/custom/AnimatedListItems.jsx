@@ -2,59 +2,15 @@
 
 import { cn } from "@/utils/cn";
 import { AnimatedList } from "@/components/magicui/animated-list";
+import dateFormatter from "@/utils/dateFormatter";
+import { IconUserFilled } from "@tabler/icons-react";
 
-let notifications = [
-  {
-    name: "Payment received",
-    description: "Magic UI",
-    time: "15m ago",
-
-    icon: "💸",
-    color: "#00C9A7",
-  },
-  {
-    name: "User signed up",
-    description: "Magic UI",
-    time: "10m ago",
-    icon: "👤",
-    color: "#FFB800",
-  },
-  {
-    name: "New message",
-    description: "Magic UI",
-    time: "5m ago",
-    icon: "💬",
-    color: "#FF3D71",
-  },
-  {
-    name: "New event",
-    description: "Magic UI",
-    time: "2m ago",
-    icon: "🗞️",
-    color: "#1E86FF",
-  },
-  {
-    name: "New event",
-    description: "Magic UI",
-    time: "2m ago",
-    icon: "🗞️",
-    color: "#1E86FF",
-  },
-  {
-    name: "New event",
-    description: "Magic UI",
-    time: "2m ago",
-    icon: "🗞️",
-    color: "#1E86FF",
-  },
-];
-
-let notificationContainerHeight = `${85 * (notifications.length+1)}px`;
-const Notification = ({ name, description, icon, color, time }) => {
+let notificationContainerHeight = "595px";
+const Notification = ({ Name, Reputation, lastUpdated, color, icon }) => {
   return (
     <figure
       className={cn(
-        "relative mx-auto min-h-fit max-w-full cursor-pointer overflow-hidden rounded-2xl p-4",
+        "relative cursor-pointer overflow-hidden rounded-2xl p-4",
         // animation styles
         "transition-all duration-200 ease-in-out hover:scale-[103%]",
         // light styles
@@ -74,12 +30,13 @@ const Notification = ({ name, description, icon, color, time }) => {
         </div>
         <div className="flex flex-col overflow-hidden">
           <figcaption className="flex flex-row items-center whitespace-pre text-lg font-medium dark:text-white ">
-            <span className="text-sm sm:text-lg">{name}</span>
+            <span className="text-sm sm:text-lg">{Name}</span>
             <span className="mx-1">·</span>
-            <span className="text-xs text-gray-500">{time}</span>
+            <span className="text-sm text-yellow-400">{`Updated ${lastUpdated}`}</span>
           </figcaption>
-          <p className="text-sm font-normal dark:text-white/60">
-            {description}
+          <p className="text-sm dark:text-white/60">
+            Reputation:{" "}
+            <span className="text-purple-500 font-bold">{Reputation}</span>
           </p>
         </div>
       </div>
@@ -87,11 +44,32 @@ const Notification = ({ name, description, icon, color, time }) => {
   );
 };
 
-export function AnimatedListItems({ className }) {
+export function AnimatedListItems({ className, items }) {
+  const colors = [
+    "#C71585",
+    "#4B2E83",
+    "#c79000",
+    "#0a82c7",
+    "#169132",
+    "#CC4629",
+  ];
+  const notifications = items
+    .sort((a, b) => a.prefs.reputation - b.prefs.reputation)
+    .slice(0, 6)
+    .map((user, index) => {
+      const formattedDate = dateFormatter(user.$updatedAt);
+      return {
+        Name: user.name,
+        Reputation: user.prefs.reputation,
+        lastUpdated: formattedDate.replace("about","").trim(),
+        icon: <IconUserFilled size={25} />,
+        color: colors[index],
+      };
+    });
   return (
     <div
       className={cn(
-        "relative flex h-[var(--notification-height)] w-full flex-col overflow-hidden p-2 border rounded-lg bg-gray-800/30",
+        "relative flex h-[var(--notification-height)] w-max flex-col overflow-hidden p-2 border rounded-lg bg-gray-800/30",
         className
       )}
       style={{

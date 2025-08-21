@@ -1,12 +1,13 @@
 "use client";
 
 import { useAuthStore } from "@/store/Auth";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 
 function signup() {
   const { createAccount } = useAuthStore();
@@ -19,6 +20,7 @@ function signup() {
     password: "",
   });
   const router = useRouter();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
     if (
@@ -32,6 +34,15 @@ function signup() {
       setDisabled(true);
     }
   }, [user]);
+
+
+  const handlePasswordVisibilityToggle = () => {
+    if (isPasswordVisible) {
+      setIsPasswordVisible(false);
+    } else {
+      setIsPasswordVisible(true);
+    }
+  };
 
   const onSignup = async (e) => {
     e.preventDefault();
@@ -53,14 +64,13 @@ function signup() {
         email.toString(),
         password.toString()
       );
-      if (signupResponse.error) {
-        toast.error(signupResponse.error.message);
+      if (signupResponse?.error) {
+        toast.error(signupResponse?.error?.message);
         return;
       }
       toast.success("Account created successfully");
       router.push("/login");
     } catch (error) {
-      console.log(error);
     } finally {
       setIsProcessing(false);
     }
@@ -74,10 +84,10 @@ function signup() {
       </h1>
       <form
         onSubmit={onSignup}
-        className="flex flex-col gap-10 text-xl p-8 rounded-2xl"
+        className="grid grid-cols-[1fr_10%] gap-y-10 gap-x-2 text-xl py-8 pl-8 pr-4 rounded-2xl"
         style={{ boxShadow: "0px 0px 15px rgba(248, 250, 252, 0.4)" }}
       >
-        <div className="authformiputs">
+        <div className="flex flex-col gap-4 col-start-1 row-start-1">
           <Label htmlFor="firstName">First Name</Label>
           <Input
             type="text"
@@ -89,7 +99,7 @@ function signup() {
           />
         </div>
 
-        <div className="authformiputs">
+        <div className="flex flex-col gap-4 col-start-1 row-start-2">
           <Label htmlFor="lastName">Last Name</Label>
           <Input
             type="text"
@@ -100,7 +110,7 @@ function signup() {
             onChange={(e) => setUser({ ...user, lastName: e.target.value })}
           />
         </div>
-        <div className="authformiputs">
+        <div className="flex flex-col gap-4 col-start-1 row-start-3">
           <Label htmlFor="email">Email</Label>
           <Input
             type="email"
@@ -111,10 +121,10 @@ function signup() {
             onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
         </div>
-        <div className="authformiputs">
+        <div className="flex flex-col gap-4 col-start-1 row-start-4">
           <Label htmlFor="password">Password</Label>
           <Input
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
             placeholder="Password"
             id="password"
             name="password"
@@ -122,23 +132,40 @@ function signup() {
             onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
         </div>
-
-        <Button
-          type="submit"
-          variant="default"
-          disabled={disabled}
-          className="bg-[#4a00e0] hover:bg-[#4a00e0]/90"
-        >
-          Signup
-        </Button>
-        <Button
-          type="button"
-          variant="default"
-          className="bg-[#6e35cb] hover:bg-[#6e35cb]/80"
-          onClick={() => router.push("/login")}
-        >
-          Login
-        </Button>
+        <div className="col-start-2 row-start-4 flex items-end">
+                  <button
+                    onClick={handlePasswordVisibilityToggle}
+                    className="cursor-pointer opacity-50 hover:opacity-100"
+                    type="button"
+                  >
+                    {isPasswordVisible ? (
+                      <IconEyeOff size={28} />
+                    ) : (
+                      <IconEye size={28} />
+                    )}
+                  </button>
+                </div>
+        
+        <div className="col-start-1 row-start-5">
+          <Button
+            type="submit"
+            variant="default"
+            disabled={disabled}
+            className="bg-[#4a00e0] hover:bg-[#4a00e0]/90"
+          >
+            Signup
+          </Button>
+        </div>
+        <div className="col-start-1 row-start-6">
+          <Button
+            type="button"
+            variant="default"
+            className="bg-[#6e35cb] hover:bg-[#6e35cb]/80"
+            onClick={() => router.push("/login")}
+          >
+            Login
+          </Button>
+        </div>
       </form>
     </div>
   );
