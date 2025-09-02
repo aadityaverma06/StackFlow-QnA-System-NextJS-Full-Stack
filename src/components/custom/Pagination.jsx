@@ -29,6 +29,7 @@ function Pagination({ className, type = "questions" }) {
     setSwitchPageForProfileUpvotes,
     switchPageForProfileDownvotes,
     setSwitchPageForProfileDownvotes,
+    triggerSearch,
   } = usePaginationStore();
 
   const [tempPage, setTempPage] = useState(1);
@@ -49,9 +50,10 @@ function Pagination({ className, type = "questions" }) {
   } = useLoggedInUserDetailsStore();
 
   useEffect(() => {
+    setTempPage(1);
+  }, [triggerSearch]);
+  useEffect(() => {
     const delayRender = setTimeout(() => {
-      console.log("initial render");
-
       if (type === "questions" && totalQuestions === 0) {
         setIsNextPageAvailable(false);
         setTempPage(0);
@@ -71,8 +73,6 @@ function Pagination({ className, type = "questions" }) {
       }
 
       if (type === "profile-answers" && totalProfileAnswers > 0) {
-        console.log("hi");
-
         setTotalProfileAnswersFetched(totalProfileAnswersFetched + limit);
       }
 
@@ -102,7 +102,7 @@ function Pagination({ className, type = "questions" }) {
     }, 1);
 
     return () => clearTimeout(delayRender);
-  }, []);
+  }, [triggerSearch]);
 
   async function handleNextPage() {
     if (
@@ -186,14 +186,19 @@ function Pagination({ className, type = "questions" }) {
   }
 
   return (
-    <div className={cn(className, "flex justify-center gap-4 items-center")}>
+    <div
+      className={cn(
+        className,
+        "flex justify-center gap-2 sm:gap-4 items-center"
+      )}
+    >
       <button
-        className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-md hover:bg-zinc-900 cursor-pointer transition duration-100"
+        className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-xs sm:text-sm lg:text-md hover:bg-zinc-900 cursor-pointer transition duration-200 font-bold"
         onClick={isPreviousPageAvailable ? handlePreviousPage : null}
       >
         Previous
       </button>
-      <h4 className="text-md">
+      <h4 className="text-xs sm:text-sm lg:text-md font-bold">
         {tempPage === 0
           ? `Page 0 of 0`
           : `Page ${page} of 
@@ -212,7 +217,7 @@ function Pagination({ className, type = "questions" }) {
         )}`}
       </h4>
       <button
-        className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-md hover:bg-zinc-900 cursor-pointer transition duration-100"
+        className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-xs sm:text-sm lg:text-md hover:bg-zinc-900 cursor-pointer transition duration-200 font-bold"
         onClick={isNextPageAvailable ? handleNextPage : null}
       >
         Next

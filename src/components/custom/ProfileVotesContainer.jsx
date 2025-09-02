@@ -20,26 +20,33 @@ function ProfileVotesContainer({ className, vote }) {
     >
       <BorderBeam duration={6} size={110} />
       <div className="grid grid-cols-[max-content_1fr_max-content] p-4 gap-4">
-        <p className="col-start-1 row-start-1 text-xl text-purple-500">
-          {`${vote.voteStatus.charAt(0).toUpperCase()}${vote.voteStatus.slice(1)}`}
-        </p>
-        <div className="col-start-2 row-start-1 text-xl font-bold">
+        <div className="col-start-1 row-start-1 flex flex-col gap-2 font-bold">
+          <p className="text-orange-500 text-sm md:text-lg lg:text-xl  ">
+            {`${vote.voteStatus.charAt(0).toUpperCase()}${vote.voteStatus.slice(
+              1
+            )}`}
+          </p>
+          <p className="text-purple-500 text-sm md:text-lg lg:text-xl ">
+            {vote.type === "question" ? "Question" : "Answer"}
+          </p>
+        </div>
+        <div className="col-start-2 row-start-1 text-base md:text-lg lg:text-xl font-bold">
           {vote.type === "question" ? (
-            questionVotesDetails.filter(
+            questionVotesDetails?.filter(
               (question) => question.$id === vote.typeId
-            )[0].title
+            )[0]?.title
           ) : (
             <MDEditor.Markdown
               source={
-                answerVotesDetails.filter(
+                answerVotesDetails?.filter(
                   (answer) => answer.$id === vote.typeId
-                )[0].content
+                )[0]?.content
               }
               style={{ backgroundColor: "transparent" }}
             />
           )}
         </div>
-        <p className="col-start-3 row-start-2 text-lg flex items-end text-yellow-400 font-bold">
+        <p className="col-start-1 xs:col-start-3 col-span-3 xs:col-span-1 row-start-2 text-xs md:text-base font-bold flex items-end text-yellow-400">
           {dateFormatter(vote.$createdAt)}
         </p>
       </div>

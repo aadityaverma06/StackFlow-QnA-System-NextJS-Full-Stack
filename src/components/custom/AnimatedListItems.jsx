@@ -28,7 +28,23 @@ const Notification = ({ Name, Reputation, lastUpdated, color, icon }) => {
         >
           <span className="text-lg">{icon}</span>
         </div>
-        <div className="flex flex-col overflow-hidden">
+        <div className="flex flex-col overflow-hidden xs:hidden lg:flex lg:flex-col xl:hidden lg:overflow-hidden">
+          <div className="flex flex-col items-start">
+            <div className="order-1 whitespace-pre text-lg font-medium dark:text-white">
+              <span className="text-sm sm:text-lg">{Name}</span>
+            </div>
+            <div className="order-3 whitespace-pre text-lg font-medium dark:text-white">
+              <span className="text-xs text-yellow-400">{`Updated ${lastUpdated}`}</span>
+            </div>
+            <div className="order-2">
+              <p className="text-sm dark:text-white/60">
+                Reputation:{" "}
+                <span className="text-purple-500 font-bold">{Reputation}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="hidden xs:flex xs:flex-col xs:overflow lg:hidden xl:flex xl:flex-col xl:overflow-hidden">
           <figcaption className="flex flex-row items-center whitespace-pre text-lg font-medium dark:text-white ">
             <span className="text-sm sm:text-lg">{Name}</span>
             <span className="mx-1">·</span>
@@ -61,7 +77,7 @@ export function AnimatedListItems({ className, items }) {
       return {
         Name: user.name,
         Reputation: user.prefs.reputation,
-        lastUpdated: formattedDate.replace("about","").trim(),
+        lastUpdated: formattedDate.replace("about", "").trim(),
         icon: <IconUserFilled size={25} />,
         color: colors[index],
       };

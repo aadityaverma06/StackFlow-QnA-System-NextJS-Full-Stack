@@ -50,6 +50,13 @@ export default async function createQuestionCollection() {
     500,
     false
   );
+  await databases.createStringAttribute(
+    db,
+    questionCollection,
+    "imageId",
+    500,
+    false
+  );
   console.log("Question Attributes Created");
 
   await databases.createIndex(

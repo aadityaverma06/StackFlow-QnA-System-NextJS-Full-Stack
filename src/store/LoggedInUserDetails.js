@@ -1,4 +1,4 @@
-import { Vote } from "lucide-react";
+
 import { create } from "zustand";
 
 const useLoggedInUserDetailsStore = create((set) => ({
@@ -70,6 +70,18 @@ const useLoggedInUserDetailsStore = create((set) => ({
       totalProfileVotesFetched: 0,
 
     }),
+
+    userReputation: null,
+    setUserReputation: (userReputation) => set({ userReputation }),
+
+    userAnswersGiven: null,
+    setUserAnswersGiven: (userAnswersGiven) => set({ userAnswersGiven }),
+
+    userQuestionsAsked: null,
+    setUserQuestionsAsked: (userQuestionsAsked) => set({ userQuestionsAsked }),
+
+    answerEdit: false,
+    setAnswerEdit: (answerEdit) => set({ answerEdit }),
 }));
 
 export default useLoggedInUserDetailsStore;

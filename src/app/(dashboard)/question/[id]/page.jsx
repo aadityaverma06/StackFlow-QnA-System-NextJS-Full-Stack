@@ -50,9 +50,11 @@ function question() {
     useAnswerDataStore();
   const { usersList } = useUserListStore();
 
-  const {questionAuthorReputation, setQuestionAuthorReputation} = useLoggedInUserDetailsStore();
+  const { questionAuthorReputation, setQuestionAuthorReputation } =
+    useLoggedInUserDetailsStore();
   const [questionAuthor, setQuestionAuthor] = useState(null);
   const [questionAuthorAvatar, setQuestionAuthorAvatar] = useState(null);
+  const [questionAuthorAvatarmd, setQuestionAuthorAvatarmd] = useState(null);
   const [message, setMessage] = useState("Loading...");
   const [questionComment, setQuestionComment] = useState("");
   const { questionCommentSubmit, setQuestionCommentSubmit } =
@@ -103,13 +105,19 @@ function question() {
 
   useEffect(() => {
     if (!question) return;
+    if (!question.image) setLoadParticles(true);
+  }, [question]);
+
+  useEffect(() => {
+    if (!question) return;
     let user = null;
-    let userAvatar = null;
     user = usersList.find((user) => user.$id === question.authorId);
     setQuestionAuthorReputation(Number(user.prefs.reputation));
-    userAvatar = avatars.getInitials(user.name, 45, 45);
+    const userAvatar = avatars.getInitials(user.name, 45, 45);
+    const userAvatarmd = avatars.getInitials(user.name, 30, 30);
     setQuestionAuthor(user);
     setQuestionAuthorAvatar(userAvatar);
+    setQuestionAuthorAvatarmd(userAvatarmd);
     setDateFormat(dateFormatter(question.$createdAt));
   }, [question]);
 
@@ -399,7 +407,6 @@ function question() {
     loadAnswerComments();
   }, [answerCommentSubmit]);
 
-
   if (
     !(
       question &&
@@ -414,7 +421,7 @@ function question() {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen gap-12">
         <h1 className="text-center border-4 rounded-xl p-8 border-gray-700">
-          <span className="text-6xl bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
+          <span className="text-5xl xs:text-6xl  bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
             {message}
           </span>
         </h1>
@@ -428,17 +435,39 @@ function question() {
     );
 
   return (
-    <div className="grid grid-cols-1 grid-rows-[max-content_max-content_max-content_max-content_max-content_max-content] pl-10 pt-16 pb-6 pr-10 gap-16 relative overflow-hidden min-h-max ">
-      {loadParticles && <ParticlesBackground quantity={2000} />}
-      <div className="flex justify-center w-full fixed md:static left-[42%] bottom-[2%] z-20">
+    <div className="grid grid-cols-1 pl-4 md:pl-10 pt-4 md:pt-16 pb-6 md:pb-6 pr-12 md:pr-10 gap-8 md:gap-12 relative overflow-hidden min-h-max ">
+      {loadParticles && (
+        <ParticlesBackground
+          quantity={2000}
+          answersLength={loadAllAnswers.length}
+          className="hidden md:block"
+        />
+      )}
+      {loadParticles && (
+        <ParticlesBackground
+          quantity={800}
+          answersLength={loadAllAnswers.length}
+          className="hidden xs:block md:hidden"
+        />
+      )}
+      {loadParticles && (
+        <ParticlesBackground
+          quantity={500}
+          answersLength={loadAllAnswers.length}
+          className="block xs:hidden"
+        />
+      )}
+      <div className="md:row-start-1 flex justify-center w-full fixed md:static left-[44%] xs:left-[45%] sm:left-[46%] bottom-[2%] z-100">
         <FloatingDock items={links} />
       </div>
-      <div className="flex justify-between border-b-2 border-zinc-700 p-2 h-max font-bold">
-        <div className="flex flex-col gap-4 text-lg ">
-          <h1 className="text-4xl text-blue-300">{question.title}</h1>
-          <div className="flex gap-4">
+      <div className="row-start-1 md:row-start-2 flex justify-between border-b-2 border-zinc-700 p-2 h-max font-bold">
+        <div className="flex flex-col gap-4 text-sm md:text-lg">
+          <h1 className="text-2xl md:text-4xl text-blue-500">
+            {question.title}
+          </h1>
+          <div className="flex gap-2 sm:gap-4">
             <p className="text-yellow-300">{dateFormat}</p>
-            <p className="text-pink-400">
+            <p className="text-pink-500">
               {loadAllAnswers.length === 0 ? (
                 "No Answers"
               ) : loadAllAnswers.length === 1 ? (
@@ -454,7 +483,7 @@ function question() {
                 </>
               )}
             </p>
-            <p className="text-pink-400">
+            <p className="text-pink-500">
               {totalVotes === 0 ? (
                 "No Votes"
               ) : totalVotes === 1 ? (
@@ -473,13 +502,13 @@ function question() {
           className="shadow-2xl h-max place-self-end p-4"
           onClick={() => router.push("/askquestion")}
         >
-          <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+          <span className="whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 text-xs sm:text-sm md:text-lg">
             Ask A Question
           </span>
         </ShimmerButton>
       </div>
-      <div className="grid grid-cols-[4%_1fr] grid-rows-[max-content_max-content_max-content] gap-4 font-bold">
-        <div className="col-start-1 row-span-3 flex flex-col items-center gap-4">
+      <div className="row-start-2 md:row-start-3 grid grid-cols-[4%_1fr] grid-rows-[max-content_max-content_max-content] gap-y-4 gap-x-2 xs:gap-4 font-bold">
+        <div className="col-start-1 row-span-3 flex flex-col items-center gap-2 md:gap-4">
           <button
             className={`rounded-full hover:bg-gray-800 transition duration-100 border-2 border-gray-500 w-max cursor-pointer p-1 opacity-70 hover:opacity-100 ${
               voteStatus === "upvoted"
@@ -489,12 +518,25 @@ function question() {
             onClick={handleQuestionUpvote}
           >
             {voteStatus === "upvoted" ? (
-              <IconCaretUpFilled size={30} />
+              <div>
+                <IconCaretUpFilled size={30} className="hidden md:block" />
+                <IconCaretUpFilled
+                  size={20}
+                  className="hidden xs:block md:hidden"
+                />
+                <IconCaretUpFilled size={10} className="block xs:hidden" />
+              </div>
             ) : (
-              <IconCaretUp size={30} />
+              <div>
+                <IconCaretUp size={30} className="hidden md:block" />
+                <IconCaretUp size={20} className="hidden xs:block md:hidden" />
+                <IconCaretUp size={10} className="block xs:hidden" />
+              </div>
             )}
           </button>
-          <p className="text-xl text-purple-500">{totalVotes}</p>
+          <p className="text-xs xs:text-sm md:text-xl text-purple-500">
+            {totalVotes}
+          </p>
           <button
             className={`rounded-full hover:bg-gray-800 transition duration-100 border-2 border-gray-500 w-max cursor-pointer p-1 opacity-70 hover:opacity-100 ${
               voteStatus === "downvoted"
@@ -504,31 +546,56 @@ function question() {
             onClick={handleQuestionDownvote}
           >
             {voteStatus === "downvoted" ? (
-              <IconCaretDownFilled size={30} />
+              <div>
+                <IconCaretDownFilled size={30} className="hidden md:block" />
+                <IconCaretDownFilled
+                  size={20}
+                  className="hidden xs:block md:hidden"
+                />
+                <IconCaretDownFilled size={10} className="block xs:hidden" />
+              </div>
             ) : (
-              <IconCaretDown size={30} />
+              <div>
+                <IconCaretDown size={30} className="hidden md:block" />
+                <IconCaretDown
+                  size={20}
+                  className="hidden xs:block md:hidden"
+                />
+                <IconCaretDown size={10} className="block xs:hidden" />
+              </div>
             )}
           </button>
         </div>
         <div className="flex flex-col gap-4 p-4 rounded-xl bg-[#080d1a] z-20 col-start-2 row-start-1">
-          <h2 className="text-3xl border-b-2 pb-2 border-zinc-800 text-blue-300">
+          <h2 className="text-xl md:text-3xl border-b-2 pb-2 border-zinc-800 text-blue-500">
             {question.title}
           </h2>
-          <MDEditor.Markdown source={question.content} />
+          <MDEditor.Markdown
+            source={question.content}
+            style={{ fontSize: "16px" }}
+            className="hidden md:block"
+          />
+          <MDEditor.Markdown
+            source={question.content}
+            style={{ fontSize: "12px" }}
+            className="block md:hidden"
+          />
         </div>
         <div className="flex flex-col gap-4 col-start-2 row-start-2 z-20">
-          <img
-            className="rounded-lg"
-            src={question.Image}
-            alt="Question Image"
-            onLoad={() => setLoadParticles(true)}
-            onError={() => setLoadParticles(true)}
-          />
+          {question?.Image ? (
+            <img
+              className="rounded-lg"
+              src={question.Image}
+              alt="Question Image"
+              onLoad={() => setLoadParticles(true)}
+              onError={() => setLoadParticles(true)}
+            />
+          ) : null}
           <div className="flex justify-between">
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-4">
               {question.tags?.map((tag, index) => (
                 <div key={index}>
-                  <button className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-md hover:bg-zinc-900 cursor-pointer transition duration-100">
+                  <button className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-xs md:text-base hover:bg-zinc-900 cursor-pointer transition duration-100">
                     {`#${tag}`}
                   </button>
                 </div>
@@ -540,13 +607,18 @@ function question() {
                 <img
                   src={questionAuthorAvatar}
                   alt="Avatar"
-                  className="rounded-sm"
+                  className="hidden md:block rounded-sm"
+                />
+                <img
+                  src={questionAuthorAvatarmd}
+                  alt="Avatar"
+                  className="rounded-sm block md:hidden"
                 />
               </div>
-              <p className="text-md col-start-2 row-start-1 text-orange-400">
+              <p className="text-xs md:text-base col-start-2 row-start-1 text-orange-400">
                 {questionAuthor.name}
               </p>
-              <p className="text-md col-start-2 row-start-2 ">
+              <p className="text-xs md:text-base col-start-2 row-start-2 ">
                 Rep:{" "}
                 <span className="text-purple-500">
                   {questionAuthorReputation}
@@ -555,8 +627,8 @@ function question() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col col-start-2 row-start-3 gap-2 border-t-2 border-zinc-700 pt-4">
-          <h3 className="text-2xl mb-4">
+        <div className="flex flex-col col-start-2 row-start-3 border-t-2 border-zinc-700 ">
+          <h3 className="text-lg md:text-2xl my-2 md:my-4 text-[#FF5349]">
             {loadAllQuestionComments.length === 0
               ? "No Comments"
               : loadAllQuestionComments.length === 1
@@ -566,24 +638,24 @@ function question() {
           {loadAllQuestionComments.map((comment, index) => (
             <div
               key={index}
-              className="flex justify-between border-y-2 items-center"
+              className="flex justify-between border-y-2 items-center mb-2"
             >
               <CommentEditAndDelete comment={comment} type="question" />
             </div>
           ))}
 
-          <div className="grid grid-cols-[85%_1fr] gap-2 border-y-2 border-zinc-700 py-4">
+          <div className="flex flex-col sm:grid sm:grid-cols-[85%_1fr] gap-2 border-y-2 border-zinc-700 py-2 sm:py-4">
             {user ? (
               <>
                 <textarea
-                  className="p-2 rounded-lg bg-[#080d1a] z-20 border border-zinc-700"
+                  className="p-2 rounded-lg bg-[#080d1a] z-20 border border-zinc-700 text-xs md:text-base"
                   placeholder="Add a comment..."
                   rows="1"
                   value={questionComment}
                   onChange={(e) => setQuestionComment(e.target.value)}
                 ></textarea>
                 <button
-                  className="col-start-2 rounded-lg text-lg bg-amber-600 hover:bg-amber-700 font-bold cursor-pointer max-h-max p-2 text-white z-30 transition duration-200"
+                  className="col-start-2 rounded-lg text-xs sm:text-sm md:text-lg bg-amber-600 hover:bg-amber-700 font-bold cursor-pointer max-h-max p-2 text-white z-30 transition duration-200 w-max sm:w-auto "
                   onClick={handleQuestionComment}
                 >
                   Add Comment
@@ -593,7 +665,7 @@ function question() {
               <>
                 <div className="flex justify-center col-span-2">
                   <h2
-                    className="text-xl text-red-400 text-center border-4 rounded-xl px-4 py-2 border-gray-700 hover:text-red-500 transition duration-200 cursor-pointer"
+                    className="text-base md:text-xl text-red-400 text-center border-4 rounded-xl px-4 py-2 border-gray-700 hover:text-red-500 transition duration-200 cursor-pointer"
                     onClick={() => {
                       router.push(
                         `/login/?question=${encodeURIComponent(
@@ -610,8 +682,8 @@ function question() {
           </div>
         </div>
       </div>
-      <div className="row-start-4 flex flex-col gap-6 pt-4 border-t-2 border-zinc-700 font-bold">
-        <h3 className="text-2xl">
+      <div className="row-start-3 md:row-start-4 flex flex-col border-t-2 border-zinc-700 font-bold">
+        <h3 className="text-lg md:text-2xl my-2 md:my-4 text-[#FF5349]">
           {loadAllAnswers.length === 0
             ? "No Answers"
             : loadAllAnswers.length === 1
@@ -628,18 +700,22 @@ function question() {
                 (comment) => comment.typeId === answer.$id
               )}
               createdAt={answer.$createdAt}
-              questionAuthorId = {question.authorId}
+              questionAuthorId={question.authorId}
             />
           </div>
         ))}
       </div>
-      <div className="row-start-5 flex flex-col gap-4 py-4 border-y-2 border-zinc-700 font-bold">
+      <div className="row-start-4 md:row-start-5 flex flex-col border-t-2 border-zinc-700 font-bold">
         {user ? (
           <>
-            <h3 className="text-2xl mb-4">Your Answer</h3>
-            <MarkdownEditor />
+            <h3 className="text-lg md:text-2xl my-2 md:my-4 text-[#FF5349]">
+              Your Answer
+            </h3>
+            <MarkdownEditor className="hidden md:block" />
+            <MarkdownEditor className="hidden sm:block md:hidden markdownmd" />
+            <MarkdownEditor className="block sm:hidden markdownsm" />
             <button
-              className="col-start-2 rounded-lg text-lg bg-amber-600 text-white hover:bg-amber-700 font-bold cursor-pointer w-max pt-2 pb-2 pl-4 pr-4 z-30 transition duration-200"
+              className="col-start-2 rounded-lg text-xs sm:text-sm md:text-lg bg-amber-600 text-white hover:bg-amber-700 font-bold cursor-pointer w-max pt-2 pb-2 pl-4 pr-4 z-30 transition duration-200 mt-4"
               onClick={handleAnswerSubmit}
             >
               Post Answer
@@ -647,9 +723,9 @@ function question() {
           </>
         ) : (
           <>
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-2">
               <h2
-                className="text-xl text-red-400 text-center border-4 rounded-xl px-4 py-2 border-gray-700 hover:text-red-500 transition duration-200 cursor-pointer"
+                className="text-base md:text-xl text-red-400 text-center border-4 rounded-xl px-4 py-2 border-gray-700 hover:text-red-500 transition duration-200 cursor-pointer"
                 onClick={() => {
                   router.push(
                     `/login/?question=${encodeURIComponent(
@@ -664,7 +740,7 @@ function question() {
           </>
         )}
       </div>
-      <div className="relative flex h-[300px] w-full items-center justify-center overflow-hidden rounded-lg border bg-background row-start-6 ">
+      <div className="row-start-5 md:row-start-6 relative flex h-[300px] w-full items-center justify-center overflow-hidden rounded-lg border bg-background">
         <AnimatedGridPattern
           numSquares={50}
           maxOpacity={0.5}
@@ -672,7 +748,7 @@ function question() {
           repeatDelay={1}
           className="mask-radial-[800px_circle_at_center,white,transparent] inset-x-0 inset-y-[-30%] h-[200%] skew-y-12"
         />
-        <p className="text-lg absolute translate-y-[380%] bg-black">
+        <p className="text-xs xs:text-sm sm:text-base md:text-lg absolute text-center bottom-[10%] bg-black">
           © 2025 StackFlow QnA System. All rights reserved.
         </p>
       </div>

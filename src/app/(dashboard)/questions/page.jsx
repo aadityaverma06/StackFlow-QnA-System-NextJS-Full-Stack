@@ -4,11 +4,11 @@ import AnimatedGridPattern from "@/components/magicui/animated-grid-pattern";
 import { FloatingDock } from "@/components/ui/floatingDock";
 import { links } from "@/utils/navbarLinks";
 import ParticlesBackground from "@/components/custom/ParticlesBackground";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/inputAceternity";
 import QuestionsContainer from "@/components/custom/QuestionsContainer";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { avatars, databases } from "@/models/client/config";
 import {
   answerCollection,
@@ -37,17 +37,32 @@ function questions() {
     setAnswersForQuestion,
     votesForQuestion,
     setVotesForQuestion,
-    switchPageForQuestions
+    switchPageForQuestions,
+    reset,
+    triggerSearch,
+    setTriggerSearch,
   } = usePaginationStore();
   const { usersList } = useUserListStore();
-
+  const [searchParams, setSearchParams] = useState("");
+  const [searchParameters, setSearchParameters] = useState("");
+  function handleQuestionSearch() {
+    reset();
+    setTotalQuestions(null);
+    setQuestionsList(null);
+    setSearchParameters(searchParams);
+    setTriggerSearch((prev) => !prev);
+    router.push(`questions/?search=${searchParams}`);
+  }
   useEffect(() => {
     async function getQuestions() {
       try {
+        const queries = searchParameters
+          ? [Query.search("title", searchParameters), Query.limit(1)]
+          : [Query.limit(1)];
         const totalQuestions = await databases.listDocuments(
           db,
           questionCollection,
-          [Query.limit(1)]
+          queries
         );
         setTotalQuestions(totalQuestions.total);
       } catch (error) {
@@ -55,7 +70,7 @@ function questions() {
       }
     }
     getQuestions();
-  }, []);
+  }, [triggerSearch]);
 
   useEffect(() => {
     if (totalQuestions === null) return;
@@ -64,7 +79,10 @@ function questions() {
         const questionsList = await getPaginatedData(
           page,
           limit,
-          questionCollection
+          questionCollection,
+          null,
+          null,
+          searchParameters
         );
         setQuestionsList(questionsList.response.documents);
       } catch (error) {
@@ -72,7 +90,7 @@ function questions() {
       }
     }
     getPaginatedQuestions();
-  }, [totalQuestions, switchPageForQuestions]);
+  }, [triggerSearch, totalQuestions, switchPageForQuestions]);
 
   useEffect(() => {
     if (!questionsList) return;
@@ -105,11 +123,18 @@ function questions() {
     router.push(`/question/${e.currentTarget.id}`);
   }
 
-  if (!(questionsList && answersForQuestion && votesForQuestion))
+  if (
+    !(
+      totalQuestions !== null &&
+      questionsList &&
+      answersForQuestion &&
+      votesForQuestion
+    )
+  )
     return (
       <div className="flex flex-col justify-center items-center min-h-screen gap-12">
         <h1 className="text-center border-4 rounded-xl p-8 border-gray-700 ">
-          <span className="text-6xl bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
+          <span className="text-5xl xs:text-6xl bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
             Loading...
           </span>
         </h1>
@@ -117,31 +142,57 @@ function questions() {
     );
 
   return (
-    <div className="grid grid-cols-[1fr_20%] gap-4 pt-16 pb-2 px-25 min-h-screen relative overflow-hidden">
+    <div className="grid grid-cols-[1fr_20%] gap-y-4 gap-x-0 lg:gap-x-4 lg:gap-y-4 pt-16 pb-2 px-5 lg:px-25 min-h-screen relative overflow-hidden ">
       <ParticlesBackground quantity="500" />
-      <div className="flex justify-center w-full fixed md:static left-[42%] bottom-[2%] z-20 col-span-2 row-start-1">
+      <div className="flex justify-center w-full fixed md:static left-[43%] bottom-[2%] z-20 col-span-2 row-start-1">
         <FloatingDock items={links} />
       </div>
-      <div className="row-start-2 col-start-1">
+      <div className="row-start-2 col-start-1 col-span-2 lg:col-span-1">
         <h1 className="text-3xl font-bold">All Questions</h1>
       </div>
-      <div className="row-start-2 col-start-2 flex justify-end">
+      <div className="hidden xs:row-start-2 xs:col-start-1 lg:col-start-2 xs:col-span-2 lg:col-span-1 xs:flex xs:justify-end h-[44px]">
         <ShimmerButton
           className="shadow-2xl"
           onClick={() => router.push("/askquestion")}
         >
-          <span className="whitespace-pre-wrap text-center text-sm font-bold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg ">
+          <span className="whitespace-pre-wrap text-center text-sm font-bold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-base ">
             Ask a Question
           </span>
         </ShimmerButton>
       </div>
-      <div className="row-start-3 col-start-1 grid grid-cols-[85%_1fr] gap-4">
-        <Input type="text" placeholder="Search Questions" />
-        <button className="col-start-2 rounded-lg text-lg bg-amber-600 text-foreground hover:bg-amber-700 font-bold cursor-pointer p-2">
+      <div className="row-start-3 col-start-1 md:grid md:grid-cols-[85%_1fr] flex flex-col gap-4 col-span-2 lg:col-span-1">
+        <Input
+          type="text"
+          placeholder="Search Questions"
+          value={searchParams}
+          onChange={(e) => setSearchParams(e.target.value)}
+        />
+        <button
+          className="hidden xs:block col-start-2 rounded-md md:rounded-lg text-sm md:text-base lg:text-lg bg-amber-600 text-foreground hover:bg-amber-700 font-bold cursor-pointer p-2 transition duration-200 w-max md:w-full lg:w-auto h-[44px]"
+          onClick={handleQuestionSearch}
+        >
           Search
         </button>
+        <div className="flex xs:hidden justify-between items-center">
+          <button
+            className="col-start-2 rounded-md md:rounded-lg text-sm md:text-base lg:text-lg bg-amber-600 text-foreground hover:bg-amber-700 font-bold cursor-pointer p-2 transition duration-200 w-max md:w-full lg:w-auto h-max xs:h-auto"
+            onClick={handleQuestionSearch}
+          >
+            Search
+          </button>
+          <div className="flex h-[44px]">
+            <ShimmerButton
+              className="shadow-2xl"
+              onClick={() => router.push("/askquestion")}
+            >
+              <span className="whitespace-pre-wrap text-center text-sm font-bold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-base ">
+                Ask a Question
+              </span>
+            </ShimmerButton>
+          </div>
+        </div>
       </div>
-      <div className="col-start-1 row-start-4 flex flex-col gap-4">
+      <div className="col-start-1 row-start-4  flex flex-col gap-4 col-span-2 lg:col-span-1">
         <h2 className="text-2xl my-4 font-bold">
           {totalQuestions === 0
             ? "No Questions"
@@ -176,8 +227,16 @@ function questions() {
                 ).length
               }
               totalVotes={
-                votesForQuestion.filter((vote) => vote.typeId === question.$id)
-                  .length
+                votesForQuestion.filter(
+                  (vote) =>
+                    vote.typeId === question.$id &&
+                    vote.voteStatus === "upvoted"
+                ).length -
+                votesForQuestion.filter(
+                  (vote) =>
+                    vote.typeId === question.$id &&
+                    vote.voteStatus === "downvoted"
+                ).length
               }
             />
           </div>
@@ -194,7 +253,7 @@ function questions() {
           repeatDelay={1}
           className="mask-radial-[800px_circle_at_center,white,transparent] inset-x-0 inset-y-[-70%] h-[200%] skew-y-12"
         />
-        <p className="text-lg absolute translate-y-[380%] bg-black">
+        <p className="text-xs xs:text-sm sm:text-base md:text-lg absolute text-center bottom-[10%] bg-black">
           © 2025 StackFlow QnA System. All rights reserved.
         </p>
       </div>

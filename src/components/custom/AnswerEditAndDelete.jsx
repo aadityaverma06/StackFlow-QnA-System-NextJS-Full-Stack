@@ -1,19 +1,12 @@
 "use client";
 
-import { avatars, databases } from "@/models/client/config";
-import {
-  answerCollection,
-  commentCollection,
-  db,
-} from "@/models/collectionNames";
+import { databases } from "@/models/client/config";
+import { answerCollection, db } from "@/models/collectionNames";
 import useAnswerDataStore from "@/store/AnswerData";
 import { useAuthStore } from "@/store/Auth";
-import useQuestionCommentDataStore from "@/store/QuestionCommentData";
-import useUserListStore from "@/store/UserList";
-import dateFormatter from "@/utils/dateFormatter";
 import { IconCheck, IconCircleMinus, IconEdit } from "@tabler/icons-react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import MarkdownEditor from "../ui/MarkdownEditor";
 import MDEditor from "@uiw/react-md-editor";
@@ -23,11 +16,9 @@ import useLoggedInUserDetailsStore from "@/store/LoggedInUserDetails";
 function AnswerEditAndDelete({ content, id, authorId, questionAuthorId }) {
   const { user } = useAuthStore();
   const [isAnswerEditable, setIsAnswerEditable] = useState(false);
-  const { usersList } = useUserListStore();
-  const { answerSubmit, setAnswerSubmit, setAnswerAuthorReputation } = useAnswerDataStore();
+  const { setAnswerSubmit, setAnswerAuthorReputation } = useAnswerDataStore();
   const { value, setValue } = useMarkdownEditorValueStore();
-  const { questionAuthorReputation, setQuestionAuthorReputation } =
-    useLoggedInUserDetailsStore();
+  const { setQuestionAuthorReputation } = useLoggedInUserDetailsStore();
 
   async function handleAnswerDelete(e) {
     try {
@@ -85,20 +76,31 @@ function AnswerEditAndDelete({ content, id, authorId, questionAuthorId }) {
     <div className="flex flex-col gap-2">
       {isAnswerEditable ? (
         <div>
-          <MarkdownEditor />
+          <MarkdownEditor className="hidden md:block" />
+          <MarkdownEditor className="hidden sm:block md:hidden markdownmd" />
+          <MarkdownEditor className="block sm:hidden markdownsm" />
         </div>
       ) : (
         <div className="row-start-1 col-start-2 bg-color bg-[#080d1a] z-20 p-4 rounded-xl">
-          <h2 className="text-3xl border-b-2 pb-3 border-zinc-800">
-            <MDEditor.Markdown source={content} />
+          <h2 className="border-b-2 pb-3 border-zinc-800">
+            <MDEditor.Markdown
+              source={content}
+              style={{ fontSize: "16px" }}
+              className="hidden md:block"
+            />
+            <MDEditor.Markdown
+              source={content}
+              style={{ fontSize: "12px" }}
+              className="block md:hidden"
+            />
           </h2>
         </div>
       )}
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-1 md:gap-2 items-center">
         {authorId === user?.$id && (
-          <div className="flex gap-4 text-md w-max justify-end mr-4 bg-gray-900 rounded-xl py-1 px-2">
+          <div className="flex gap-2 md:gap-4 text-xs md:text-base w-max justify-end mr-4 bg-gray-900 rounded-xl py-1 px-2">
             <button
-              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-2 transition duration-150"
+              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-1 md:gap-2 transition duration-150"
               onClick={
                 isAnswerEditable
                   ? handleAnswerEdit
@@ -112,25 +114,52 @@ function AnswerEditAndDelete({ content, id, authorId, questionAuthorId }) {
               id={id}
             >
               {isAnswerEditable ? (
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2">
                   {" "}
-                  <IconCheck size={28} color="green" />
+                  <IconCheck
+                    size={28}
+                    color="green"
+                    className="hidden md:block"
+                  />
+                  <IconCheck
+                    size={20}
+                    color="green"
+                    className="block md:hidden"
+                  />
                   <p className="mt-[1.5px]">Update</p>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2">
                   {" "}
-                  <IconEdit size={28} color="green" />
+                  <IconEdit
+                    size={28}
+                    color="green"
+                    className="hidden md:block"
+                  />
+                  <IconEdit
+                    size={20}
+                    color="green"
+                    className="block md:hidden"
+                  />
                   <p className="mt-[1.5px]">Edit</p>
                 </div>
               )}
             </button>
             <button
-              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-2 transition duration-150"
+              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-1 md:gap-2 transition duration-150"
               onClick={handleAnswerDelete}
               id={id}
             >
-              <IconCircleMinus color="red" size={28} />
+              <IconCircleMinus
+                size={28}
+                color="red"
+                className="hidden md:block"
+              />
+              <IconCircleMinus
+                size={20}
+                color="red"
+                className="block md:hidden"
+              />
               <p className="mt-[1.5px]">Delete</p>
             </button>
           </div>

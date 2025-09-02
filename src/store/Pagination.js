@@ -57,6 +57,8 @@ const usePaginationStore = create((set) => ({
       isNextPageAvailable: true,
       totalQuestionsFetched: 0,
     }),
+    triggerSearch: false,
+    setTriggerSearch: (triggerSearch) => set({ triggerSearch }),
 }));
 
 export default usePaginationStore;

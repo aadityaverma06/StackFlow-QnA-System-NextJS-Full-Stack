@@ -2,9 +2,19 @@ import { databases } from "@/models/client/config";
 import { db } from "@/models/collectionNames";
 import { Query } from "appwrite";
 
-async function getPaginatedData(page, limit, collection, authorId, voteType) {
+async function getPaginatedData(
+  page,
+  limit,
+  collection,
+  authorId,
+  voteType,
+  searchParameters
+) {
   const offset = (page - 1) * limit;
   let queries = [];
+
+  console.log(searchParameters);
+
   authorId
     ? (queries = [
         collection === "votes"
@@ -14,6 +24,8 @@ async function getPaginatedData(page, limit, collection, authorId, voteType) {
         Query.offset(offset),
       ])
     : (queries = [Query.limit(limit), Query.offset(offset)]);
+
+  if (searchParameters) queries.push(Query.search("title", searchParameters));
 
   if (voteType === "upvotes")
     queries.push(Query.equal("voteStatus", "upvoted"));

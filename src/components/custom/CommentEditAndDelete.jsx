@@ -53,7 +53,7 @@ function CommentEditAndDelete({ comment, type }) {
           content: commentEditValue,
         }
       );
-      toast.error(
+      toast.success(
         `${
           type === "question" ? "Question" : "Answer"
         } Comment Updated Successfully`
@@ -69,11 +69,11 @@ function CommentEditAndDelete({ comment, type }) {
   }
 
   return (
-    <>
+    <div className="flex justify-between items-center flex-wrap gap-2 md:gap-0 w-full">
       {isCommentEditable ? (
-        <div className="w-[55%]">
+        <div className="w-full md:w-[62%]">
           <textarea
-            className="p-2 rounded-lg bg-[#080d1a] z-20 border border-zinc-700 w-full"
+            className="p-2 rounded-lg bg-[#080d1a] z-20 border border-zinc-700 w-full text-xs sm:text-base"
             value={commentEditValue}
             onChange={(e) => setCommentEditValue(e.target.value)}
             type="text"
@@ -83,14 +83,14 @@ function CommentEditAndDelete({ comment, type }) {
         </div>
       ) : (
         <div>
-          <p className="p-2 text-lg">{comment.content}</p>
+          <p className="p-2 text-sm md:text-lg">{comment.content}</p>
         </div>
       )}
-      <div className="flex gap-2 items-center">
+      <div className="flex flex-wrap gap-4 md:gap-2 items-center">
         {comment.authorId === user?.$id && (
-          <div className="flex gap-4 text-md w-max justify-end mr-4 bg-gray-900 rounded-xl py-1 px-2">
+          <div className="flex gap-2 md:gap-4 text-xs md:text-base w-max justify-end mr-4 bg-gray-900 rounded-sm xs:rounded-lg sm:rounded-xl py-[2px] px-1 md:py-1 md:px-2 order-3 xs:order-1 ml-2 xs:ml-0">
             <button
-              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-2 transition duration-150"
+              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-1 md:gap-2 transition duration-150"
               onClick={
                 isCommentEditable
                   ? handleCommentEdit
@@ -103,48 +103,77 @@ function CommentEditAndDelete({ comment, type }) {
               id={comment.$id}
             >
               {isCommentEditable ? (
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2">
                   {" "}
-                  <IconCheck size={28} color="green" />
+                  <IconCheck
+                    size={28}
+                    color="green"
+                    className="hidden md:block"
+                  />
+                  <IconCheck
+                    size={20}
+                    color="green"
+                    className="block md:hidden"
+                  />
                   <p className="mt-[1.5px]">Update</p>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2">
                   {" "}
-                  <IconEdit size={28} color="green" />
+                  <IconEdit
+                    size={28}
+                    color="green"
+                    className="hidden md:block"
+                  />
+                  <IconEdit
+                    size={20}
+                    color="green"
+                    className="block md:hidden"
+                  />
                   <p className="mt-[1.5px]">Edit</p>
                 </div>
               )}
             </button>
             <button
-              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-2 transition duration-150"
+              className="cursor-pointer opacity-70 hover:opacity-100 flex gap-1 md:gap-2 transition duration-150"
               onClick={handleCommentDelete}
               id={comment.$id}
             >
-              <IconCircleMinus color="red" size={28} />
+              <IconCircleMinus
+                size={28}
+                color="red"
+                className="hidden md:block"
+              />
+              <IconCircleMinus
+                size={20}
+                color="red"
+                className="block md:hidden"
+              />
               <p className="mt-[1.5px]">Delete</p>
             </button>
           </div>
         )}
-        <img
-          src={avatars.getInitials(
-            usersList.find((user) => user.$id === comment.authorId).name,
-            23,
-            23
-          )}
-          alt="Avatar"
-          className="rounded-sm h-max w-max"
-        />
-        <p className="text-md col-start-2 row-start-1 text-orange-400">
-          {usersList.find((user) => user.$id === comment.authorId).name}
-        </p>
-        <p className="text-md col-start-2 row-start-2 ">
+        <div className="flex gap-2 items-center order-1 xs:order-2 ml-2 xs:ml-0">
+          <img
+            src={avatars.getInitials(
+              usersList.find((user) => user.$id === comment.authorId).name,
+              23,
+              23
+            )}
+            alt="Avatar"
+            className="rounded-sm h-max w-max"
+          />
+          <p className="text-xs md:text-base col-start-2 row-start-1 text-orange-400">
+            {usersList.find((user) => user.$id === comment.authorId).name}
+          </p>
+        </div>
+        <p className="text-xs md:text-base col-start-2 row-start-2 order-2 xs:order-3 ">
           <span className="text-yellow-300">
             {dateFormatter(comment.$createdAt)}
           </span>
         </p>
       </div>
-    </>
+    </div>
   );
 }
 

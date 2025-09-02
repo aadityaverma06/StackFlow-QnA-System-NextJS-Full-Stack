@@ -3,7 +3,8 @@ import {
   IconLogout,
   IconMessageQuestion,
   IconUser,
-  IconHash
+  IconHash,
+  IconListDetails
 } from "@tabler/icons-react";
 
 export const links = [
@@ -21,11 +22,18 @@ export const links = [
     ),
     href: "/home",
   },
+  {
+    title: "Ask Question",
+    icon: (
+      <IconMessageQuestion className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+    ),
+    href: "/askquestion",
+  },
 
   {
     title: "All Questions",
     icon: (
-      <IconMessageQuestion className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      <IconListDetails className="h-full w-full text-neutral-500 dark:text-neutral-300" />
     ),
     href: "/questions",
   },
@@ -44,3 +52,5 @@ export const links = [
     href: "/logout",
   },
 ];
+
+

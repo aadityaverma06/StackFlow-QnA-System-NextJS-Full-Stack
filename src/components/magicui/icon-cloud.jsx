@@ -1,13 +1,21 @@
 "use client";
 
+import { cn } from "@/utils/cn";
 import React, { useEffect, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 
-function easeOutCubic(t){
+function easeOutCubic(t) {
   return 1 - Math.pow(1 - t, 3);
 }
 
-export function IconCloud({ icons, images, distanceBetweenImage = 100, }) {
+export function IconCloud({
+  icons,
+  images,
+  distanceBetweenImage = 100,
+  width,
+  height,
+  className,
+}) {
   const canvasRef = useRef(null);
   const [iconPositions, setIconPositions] = useState([]);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
@@ -29,8 +37,8 @@ export function IconCloud({ icons, images, distanceBetweenImage = 100, }) {
 
     const newIconCanvases = items.map((item, index) => {
       const offscreen = document.createElement("canvas");
-      offscreen.width = 40;
-      offscreen.height = 40;
+      offscreen.width = width;
+      offscreen.height = height;
       const offCtx = offscreen.getContext("2d");
 
       if (offCtx) {
@@ -134,14 +142,14 @@ export function IconCloud({ icons, images, distanceBetweenImage = 100, }) {
       if (dx * dx + dy * dy < radius * radius) {
         const targetX = -Math.atan2(
           icon.y,
-          Math.sqrt(icon.x * icon.x + icon.z * icon.z),
+          Math.sqrt(icon.x * icon.x + icon.z * icon.z)
         );
         const targetY = Math.atan2(icon.x, icon.z);
 
         const currentX = rotationRef.current.x;
         const currentY = rotationRef.current.y;
         const distance = Math.sqrt(
-          Math.pow(targetX - currentX, 2) + Math.pow(targetY - currentY, 2),
+          Math.pow(targetX - currentX, 2) + Math.pow(targetY - currentY, 2)
         );
 
         const duration = Math.min(2000, Math.max(800, distance * 1000));
@@ -245,7 +253,7 @@ export function IconCloud({ icons, images, distanceBetweenImage = 100, }) {
         ctx.save();
         ctx.translate(
           canvas.width / 2 + rotatedX,
-          canvas.height / 2 + rotatedY,
+          canvas.height / 2 + rotatedY
         );
         ctx.scale(scale, scale);
         ctx.globalAlpha = opacity;
@@ -288,13 +296,13 @@ export function IconCloud({ icons, images, distanceBetweenImage = 100, }) {
   return (
     <canvas
       ref={canvasRef}
-      width={500}
-      height={500}
+      width={width === 40 ? 500 : width === 60 ? 400 : 325}
+      height={height === 40 ? 500 : width === 60 ? 300 : 250}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="rounded-lg"
+      className={cn(className, "rounded-lg")}
       aria-label="Interactive 3D Icon Cloud"
       role="img"
     />

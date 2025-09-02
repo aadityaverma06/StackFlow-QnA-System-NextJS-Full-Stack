@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/Auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,14 +28,13 @@ function login() {
     }
   }, [user]);
 
-
-  const handlePasswordVisibilityToggle = () => {
+  function handlePasswordVisibilityToggle() {
     if (isPasswordVisible) {
       setIsPasswordVisible(false);
     } else {
       setIsPasswordVisible(true);
     }
-  };
+  }
 
   const onLogin = async (e) => {
     e.preventDefault();

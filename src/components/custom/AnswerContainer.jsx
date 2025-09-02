@@ -36,6 +36,7 @@ function AnswerContainer({
   const { user } = useAuthStore();
   const users = usersList.find((user) => user.$id === authorId);
   const authorAvatar = avatars.getInitials(users.name, 45, 45);
+  const authorAvatarmd = avatars.getInitials(users.name, 30, 30);
   const authorName = users.name;
   const [totalVotes, setTotalVotes] = useState(null);
   const [voteStatus, setVoteStatus] = useState("");
@@ -260,8 +261,8 @@ function AnswerContainer({
   }
 
   return (
-    <div className="grid grid-cols-[4%_1fr] grid-rows-[max-content_max-content_max-content_max-content_max-content_max-content] gap-4 pb-2 pt-4 border-t-2 border-zinc-700">
-      <div className="col-start-1 row-span-3 flex flex-col items-center gap-4">
+    <div className="grid grid-cols-[4%_1fr] grid-rows-[max-content_max-content_max-content_max-content_max-content_max-content] gap-y-4 gap-x-2 xs:gap-4 pb-2 pt-4 border-t-2 border-zinc-700">
+      <div className="col-start-1 row-span-3 flex flex-col items-center gap-2 md:gap-4">
         <button
           className={`rounded-full hover:bg-gray-800 transition duration-100 border-2 border-gray-500 w-max cursor-pointer p-1 opacity-70 hover:opacity-100 ${
             voteStatus === "upvoted"
@@ -271,12 +272,25 @@ function AnswerContainer({
           onClick={handleAnswerUpvote}
         >
           {voteStatus === "upvoted" ? (
-            <IconCaretUpFilled size={30} />
+            <div>
+              <IconCaretUpFilled size={30} className="hidden md:block" />
+              <IconCaretUpFilled
+                size={20}
+                className="hidden xs:block md:hidden"
+              />
+              <IconCaretUpFilled size={10} className="block xs:hidden" />
+            </div>
           ) : (
-            <IconCaretUp size={30} />
+            <div>
+              <IconCaretUp size={30} className="hidden md:block" />
+              <IconCaretUp size={20} className="hidden xs:block md:hidden" />
+              <IconCaretUp size={10} className="block xs:hidden" />
+            </div>
           )}
         </button>
-        <p className="text-lg text-purple-500">{totalVotes}</p>
+        <p className="text-xs xs:text-sm md:text-lg text-purple-500">
+          {totalVotes}
+        </p>
         <button
           className={`rounded-full hover:bg-gray-800 transition duration-100 border-2 border-gray-500 w-max cursor-pointer p-1 opacity-70 hover:opacity-100 ${
             voteStatus === "downvoted"
@@ -286,9 +300,20 @@ function AnswerContainer({
           onClick={handleAnswerDownvote}
         >
           {voteStatus === "downvoted" ? (
-            <IconCaretDownFilled size={30} />
+            <div>
+              <IconCaretDownFilled size={30} className="hidden md:block" />
+              <IconCaretDownFilled
+                size={20}
+                className="hidden xs:block md:hidden"
+              />
+              <IconCaretDownFilled size={10} className="block xs:hidden" />
+            </div>
           ) : (
-            <IconCaretDown size={30} />
+            <div>
+              <IconCaretDown size={30} className="hidden md:block" />
+              <IconCaretDown size={20} className="hidden xs:block md:hidden" />
+              <IconCaretDown size={10} className="block xs:hidden" />
+            </div>
           )}
         </button>
       </div>
@@ -300,23 +325,32 @@ function AnswerContainer({
       />
       <div className="col-start-2 row-start-2 grid grid-cols-[max-content_max-content] grid-rows-[max-content_max-content] gap-x-2 justify-end">
         <div className="col-start-1 row-span-2">
-          <img src={authorAvatar} alt="Avatar" className="rounded-sm" />
+          <img
+            src={authorAvatar}
+            alt="Avatar"
+            className="hidden md:block rounded-sm"
+          />
+          <img
+            src={authorAvatarmd}
+            alt="Avatar"
+            className="rounded-sm block md:hidden"
+          />
         </div>
-        <p className="text-md col-start-2 row-start-1 text-orange-400">
+        <p className="text-xs md:text-base col-start-2 row-start-1 text-orange-400">
           {authorName}
         </p>
-        <p className="text-md col-start-2 row-start-2 ">
+        <p className="text-sm md:text-base col-start-2 row-start-2 ">
           Rep: <span className="text-purple-500">{authorReputation}</span>
         </p>
       </div>
 
       <div className="col-start-2 row-start-3 flex justify-end py-2 border-y-2">
-        <p className="text-lg text-yellow-300">{`asked ${dateFormatter(
+        <p className="text-xs md:text-base lg:text-lg text-yellow-300">{`asked ${dateFormatter(
           createdAt
         )}`}</p>
       </div>
       <div className="col-start-2 row-start-4">
-        <p className="text-2xl">
+        <p className="text-lg md:text-2xl text-[#FF5349]">
           {comments.length === 0
             ? "No Comments"
             : comments.length === 1
@@ -326,26 +360,23 @@ function AnswerContainer({
       </div>
       <div className="col-start-2 row-start-5 flex flex-col gap-2">
         {comments.map((comment, index) => (
-          <div
-            key={index}
-            className="flex justify-between border-y-2 items-center"
-          >
+          <div key={index} className="border-y-2">
             <CommentEditAndDelete comment={comment} type="answer" />
           </div>
         ))}
       </div>
-      <div className="col-start-2 row-start-6 grid grid-cols-[85%_1fr] gap-2 border-b-2 border-t-2 border-zinc-700 py-4">
+      <div className="col-start-2 row-start-6 border-b-2 border-t-2 flex flex-col sm:grid sm:grid-cols-[85%_1fr] gap-2 border-y-2 border-zinc-700 py-2 sm:py-4">
         {user ? (
           <>
             <textarea
-              className="p-2 rounded-lg bg-[#080d1a] z-20 border border-zinc-700"
+              className="p-2 rounded-lg bg-[#080d1a] z-20 border border-zinc-700 text-xs md:text-base"
               placeholder="Add a comment..."
               rows="1"
               value={answerComment}
               onChange={(e) => setAnswerComment(e.target.value)}
             ></textarea>
             <button
-              className="col-start-2 rounded-lg text-lg bg-amber-600 text-white z-30 hover:bg-amber-700 font-bold cursor-pointer max-h-max p-2 transition duration-200"
+              className="col-start-2 rounded-lg text-xs sm:text-sm md:text-lg bg-amber-600 hover:bg-amber-700 font-bold cursor-pointer max-h-max p-2 text-white z-30 transition duration-200 w-max sm:w-auto "
               onClick={handleAnswerComment}
             >
               Add Comment
@@ -355,7 +386,7 @@ function AnswerContainer({
           <>
             <div className="flex justify-center col-span-2">
               <h2
-                className="text-xl text-red-400 text-center border-4 rounded-xl px-4 py-2 border-gray-700 hover:text-red-500 transition duration-200 cursor-pointer"
+                className="text-base md:text-xl text-red-400 text-center border-4 rounded-xl px-4 py-2 border-gray-700 hover:text-red-500 transition duration-200 cursor-pointer"
                 onClick={() => {
                   router.push("/login");
                 }}

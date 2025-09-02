@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import ParticlesBackground from "@/components/custom/ParticlesBackground";
 import { useAuthStore } from "@/store/Auth";
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { databases, storage } from "@/models/client/config";
 import { ID } from "appwrite";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/models/collectionNames";
 import toast from "react-hot-toast";
 import useMarkdownEditorValueStore from "@/store/MarkdownEditorValue";
+import { IconCircleMinus } from "@tabler/icons-react";
 
 const AnimatedGridPattern = dynamic(
   () => import("@/components/magicui/animated-grid-pattern.jsx"),
@@ -25,7 +26,6 @@ const AnimatedGridPattern = dynamic(
 );
 
 function askquestion() {
-  const redirectUrl = useSearchParams()?.get("redirectUrl");
   const { value, setValue } = useMarkdownEditorValueStore();
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
@@ -34,6 +34,9 @@ function askquestion() {
   const { session, user } = useAuthStore();
   const imgRef = useRef(null);
   const router = useRouter();
+  const params = useParams();
+  const id = params.id;
+  const [loadQuestion, setLoadQuestion] = useState(null);
 
   useEffect(() => {
     if (!session) {
@@ -43,6 +46,27 @@ function askquestion() {
 
   if (!session) return;
 
+  useEffect(() => {
+    async function getQuestion() {
+      if (!id) return;
+      try {
+        const question = await databases.getDocument(
+          db,
+          questionCollection,
+          id
+        );
+        setValue(question.content);
+        setTitle(question.title);
+        setTags(question.tags);
+        setLoadQuestion(question);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+
+    getQuestion();
+  }, []);
+
   function handleAddTag() {
     if (tag) {
       setTags([...tags, tag]);
@@ -51,43 +75,95 @@ function askquestion() {
   }
 
   async function handlePublish() {
-    if (!user) {
-      toast.error("You are not logged in");
-      return;
-    }
     try {
-      const imageUpload = await storage.createFile(
-        questionAttachmentBucket,
-        ID.unique(),
-        image
-      );
-      const imageUrl = storage.getFileView(
-        questionAttachmentBucket,
-        imageUpload.$id
-      );
-      const question = await databases.createDocument(
-        db,
-        questionCollection,
-        ID.unique(),
-        {
-          title,
-          content: value,
-          authorId: user.$id,
-          tags,
-          Image: imageUrl,
-        }
-      );
+      if (image) {
+        const imageUpload = await storage.createFile(
+          questionAttachmentBucket,
+          ID.unique(),
+          image
+        );
+        const imageUrl = storage.getFileView(
+          questionAttachmentBucket,
+          imageUpload.$id
+        );
+        const question = await databases.createDocument(
+          db,
+          questionCollection,
+          ID.unique(),
+          {
+            title,
+            content: value,
+            authorId: user.$id,
+            tags,
+            Image: imageUrl,
+            imageId: imageUpload.$id,
+          }
+        );
+      } else if (!image) {
+        const question = await databases.createDocument(
+          db,
+          questionCollection,
+          ID.unique(),
+          {
+            title,
+            content: value,
+            authorId: user.$id,
+            tags,
+          }
+        );
+      }
       toast.success("Question Published Successfully");
-      console.log(tags);
       setTitle("");
       setValue("");
       imgRef.current.value = "";
       setImage("");
       setTags([]);
+      setTag("");
     } catch (error) {
       toast.error(error.message);
-      console.log(error);
     }
+  }
+
+  async function handleUpdate() {
+    try {
+      let imageUrl = "";
+      let imageUpload = "";
+      if (image) {
+        imageUpload = await storage.createFile(
+          questionAttachmentBucket,
+          ID.unique(),
+          image
+        );
+        imageUrl = storage.getFileView(
+          questionAttachmentBucket,
+          imageUpload.$id
+        );
+      }
+      const updateQuestion = await databases.updateDocument(
+        db,
+        questionCollection,
+        id,
+        {
+          title,
+          content: value,
+          tags,
+          Image: imageUrl || loadQuestion.Image,
+          imageId: imageUpload.$id || loadQuestion.imageId,
+        }
+      );
+      toast.success("Question Updated Successfully");
+      setTitle("");
+      setValue("");
+      imgRef.current.value = "";
+      setImage("");
+      setTags([]);
+      setTag("");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+  function handleRemoveTag(currentTag) {
+    setTags(tags.filter((tag) => tag !== currentTag));
   }
   const BottomGradient = () => {
     return (
@@ -97,6 +173,18 @@ function askquestion() {
       </>
     );
   };
+
+  if (id && !loadQuestion)
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen gap-12">
+        <h1 className="text-center border-4 rounded-xl p-8 border-gray-700 ">
+          <span className="text-6xl bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
+            Loading...
+          </span>
+        </h1>
+      </div>
+    );
+
   return (
     <div className="grid grid-rows-[max-content_max-content_max-content_max-content_max-content_max-content] md:grid-rows-[80px_max-content_max-content_max-content_max-content_max-content] pl-10 pt-14 pb-6 pr-10 gap-4 grid-cols-[1fr_5px] relative overflow-hidden">
       <ParticlesBackground />
@@ -131,7 +219,7 @@ function askquestion() {
             type="file"
             className="file:text-gray-400 file:cursor-pointer cursor-pointer"
             accept=".jpg,.jpeg,.png"
-            onChange={(e) => setImage(e.target.files[0])}
+            onChange={(e) => setImage(e?.target?.files[0])}
             ref={imgRef}
           />
         }
@@ -150,7 +238,7 @@ function askquestion() {
               className="col-start-1 row-start-1"
             />
             <button
-              className="group/btn relative block h-full rounded-lg bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] pl-4 pr-4 cursor-pointer col-start-2 row-start-1"
+              className="group/btn relative block h-full rounded-lg bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] pl-4 pr-4 cursor-pointer col-start-2 row-start-1 text-md sm:text-lg"
               type="button"
               onClick={handleAddTag}
             >
@@ -162,9 +250,15 @@ function askquestion() {
                 {tags.map((tag, index) => (
                   <button
                     key={index}
-                    className="rounded-lg bg-zinc-800 pl-2 pr-2 pt-1 pb-1 text-md hover:bg-zinc-900 cursor-pointer transition duration-100"
+                    className="rounded-lg bg-zinc-800 py-1 px-2 text-sm sm:text-md hover:bg-zinc-900 cursor-pointer transition duration-100 flex gap-2 items-center text-green-400 font-bold"
                   >
                     {`#${tag}`}
+                    <IconCircleMinus
+                      color="red"
+                      size={20}
+                      onClick={() => handleRemoveTag(tag)}
+                      className="mt-[2px] opacity-70 hover:opacity-100 cursor-pointer"
+                    />
                   </button>
                 ))}
               </div>
@@ -172,13 +266,13 @@ function askquestion() {
           </div>
         }
       />
-      <div className="row-start-5 col-start-1 md:row-start-6 p-4 md:col-span-2">
+      <div className="row-start-5 col-start-1 md:row-start-6 md:col-span-2 mt-4">
         <button
-          className="group/btn relative block h-full rounded-lg w-[200px] bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] cursor-pointer p-4"
+          className="group/btn relative block h-full w-max rounded-lg bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-700 dark:from-zinc-800 dark:to-zinc-700 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] cursor-pointer  textmd sm:text-lg px-6 py-2"
           type="button"
-          onClick={handlePublish}
+          onClick={loadQuestion ? handleUpdate : handlePublish}
         >
-          Publish
+          {loadQuestion ? "Update" : "Publish"}
           <BottomGradient />
         </button>
       </div>

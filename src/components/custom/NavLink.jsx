@@ -14,7 +14,7 @@ export function NavLink({ href, children, className }) {
       className={cn(
         className,
         isActive &&
-          "w-max bg-[#141e38] text-foreground rounded-lg px-4 py-2 hover:bg-[#141e38ad]"
+          "w-max bg-[#0f182e] md:bg-[#141e38] text-foreground rounded-sm md:rounded-lg px-2 py-1 md:px-4 md:py-2 hover:bg-[#141e38ad]"
       )}
     >
       {children}

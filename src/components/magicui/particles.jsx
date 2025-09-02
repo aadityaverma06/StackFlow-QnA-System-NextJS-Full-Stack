@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { cn } from "@/utils/cn";
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -50,6 +50,7 @@ export const Particles = ({
   color = "#ffffff",
   vx = 0,
   vy = 0,
+  answersLength,
   ...props
 }) => {
   const pathname = usePathname();
@@ -99,7 +100,7 @@ export const Particles = ({
 
   useEffect(() => {
     initCanvas();
-  }, [pathname]);
+  }, [pathname, answersLength]);
 
   const initCanvas = () => {
     resizeCanvas();
@@ -185,7 +186,12 @@ export const Particles = ({
 
   const clearContext = () => {
     if (context.current) {
-      context.current.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
+      context.current.clearRect(
+        0,
+        0,
+        canvasSize.current.w,
+        canvasSize.current.h
+      );
     }
   };
 
@@ -215,7 +221,9 @@ export const Particles = ({
         canvasSize.current.h - circle.y - circle.translateY - circle.size, // distance from bottom edge
       ];
       const closestEdge = edge.reduce((a, b) => Math.min(a, b));
-      const remapClosestEdge = parseFloat(remapValue(closestEdge, 0, 20, 0, 1).toFixed(2));
+      const remapClosestEdge = parseFloat(
+        remapValue(closestEdge, 0, 20, 0, 1).toFixed(2)
+      );
       if (remapClosestEdge > 1) {
         circle.alpha += 0.02;
         if (circle.alpha > circle.targetAlpha) {
@@ -257,7 +265,8 @@ export const Particles = ({
       className={cn("pointer-events-none", className)}
       ref={canvasContainerRef}
       aria-hidden="true"
-      {...props}>
+      {...props}
+    >
       <canvas ref={canvasRef} className="size-full" />
     </div>
   );

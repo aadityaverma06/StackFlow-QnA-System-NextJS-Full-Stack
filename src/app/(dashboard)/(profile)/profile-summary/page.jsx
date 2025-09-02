@@ -1,32 +1,24 @@
 "use client";
 
 import MagicCardContainerProfile from "@/components/custom/MagicCardContainerProfile";
-import { useAuthStore } from "@/store/Auth";
-
 import useLoggedInUserDetailsStore from "@/store/LoggedInUserDetails";
-import usePaginationStore from "@/store/Pagination";
-import useUserListStore from "@/store/UserList";
 import React from "react";
 
 function profileSummary() {
-  const { user } = useAuthStore();
-  const { totalProfileQuestions, totalProfileAnswers} = useLoggedInUserDetailsStore();
-  const { usersList } = useUserListStore();
-  const currentUser = usersList.find(
-    (currentUser) => currentUser.$id === user.$id
-  );
+  const { userReputation, userAnswersGiven, userQuestionsAsked } =
+    useLoggedInUserDetailsStore();
 
   return (
-    <div className="flex gap-4 pt-4">
-      <MagicCardContainerProfile
-        title="Reputation"
-        value={currentUser.prefs.reputation}
-      />
+    <div className="pl-2 md:pl-0 flex flex-col lg:justify-center lg:items-center w-full h-full md:flex-row gap-4 pt-2 md:pt-4 text-xs sm:text-sm md:text-base lg:text-lg">
+      <MagicCardContainerProfile title="Reputation" value={userReputation} />
       <MagicCardContainerProfile
         title="Questions Asked"
-        value={totalProfileQuestions}
+        value={userQuestionsAsked}
       />
-      <MagicCardContainerProfile title="Answers Given" value={totalProfileAnswers} />
+      <MagicCardContainerProfile
+        title="Answers Given"
+        value={userAnswersGiven}
+      />
     </div>
   );
 }

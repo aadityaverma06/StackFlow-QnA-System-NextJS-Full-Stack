@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 function profileQuestions() {
   const { user } = useAuthStore();
-  const { usersList } = useUserListStore();
+  const { usersList, setRefreshList } = useUserListStore();
   const {
     questionsList,
     answersForQuestion,
@@ -24,14 +24,14 @@ function profileQuestions() {
   } = usePaginationStore();
   const router = useRouter();
 
-
   function handleQuestionClick(e) {
     e.preventDefault();
+    setRefreshList((prev) => !prev);
     router.push(`/question/${e.currentTarget.id}`);
   }
   return (
-    <div className="grid grid-cols-[80%_20%] gap-4 pt-4">
-      <h3 className="text-2xl col-start-1 font-bold">
+    <div className="flex flex-col md:grid md:grid-cols-[80%_20%] gap-4 pt-4">
+      <h3 className="text-lg sm:text-xl md:text-2xl col-start-1 font-bold">
         {totalQuestions === 0
           ? "No Questions"
           : totalQuestions === 1
@@ -65,14 +65,21 @@ function profileQuestions() {
               )?.length
             }
             totalVotes={
-              votesForQuestion?.filter((vote) => vote.typeId === question.$id)
-                ?.length
+              votesForQuestion?.filter(
+                (vote) =>
+                  vote.typeId === question.$id && vote.voteStatus === "upvoted"
+              )?.length -
+              votesForQuestion?.filter(
+                (vote) =>
+                  vote.typeId === question.$id && vote.voteStatus === "downvoted"
+              )?.length
             }
             type="profile"
+            imageId={question.imageId}
           />
         </div>
       ))}
-      <Pagination className="mt-4 col-start-1" type="profile-questions" />
+      <Pagination className="my-4 col-start-1" type="profile-questions" />
     </div>
   );
 }

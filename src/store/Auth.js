@@ -61,6 +61,27 @@ export const useAuthStore = create()(
           return { success: false, error };
         }
       },
+
+      async updateNameAndEmail(name, email, password) {
+        try {
+          if (name) await account.updateName(name);
+          if (email) await account.updateEmail(email, password);
+          return { success: true };
+        } catch (error) {
+          console.log(error);
+          return { success: false, error };
+        }
+      },
+
+      async updatePassword(password) {
+        try {
+          await account.updatePassword(password);
+          return { success: true };
+        } catch (error) {
+          console.log(error);
+          return { success: false, error };
+        }
+      },
       async logout() {
         try {
           await account.deleteSessions();

@@ -7,19 +7,23 @@ import ProfileAnswersContainer from "@/components/custom/ProfileAnswersContainer
 import Pagination from "@/components/custom/Pagination";
 import usePaginationStore from "@/store/Pagination";
 import { useRouter } from "next/navigation";
+import { set } from "date-fns";
+import useUserListStore from "@/store/UserList";
 
 function profileQuestions() {
   const { answersList, totalProfileAnswers, questionForAnswers } =
     useLoggedInUserDetailsStore();
   const router = useRouter();
+  const { setRefreshList } = useUserListStore();
   function handleAnswerClick(e) {
     e.preventDefault();
+    setRefreshList((prev) => !prev);
     router.push(`/question/${e.currentTarget.id}`);
   }
 
   return (
     <div className="flex flex-col gap-4 pt-4">
-      <h3 className="text-2xl font-bold">
+      <h3 className="text-lg sm:text-xl md:text-2xl font-bold">
         {totalProfileAnswers === 0
           ? "No Answers"
           : totalProfileAnswers === 1
@@ -47,7 +51,7 @@ function profileQuestions() {
           />
         </div>
       ))}
-      <div className="flex justify-center gap-4 items-center mt-4">
+      <div className="flex justify-center gap-4 items-center my-4">
         <Pagination type="profile-answers" />
       </div>
     </div>

@@ -14,8 +14,8 @@ function AskQuestionPageContainer(props) {
       )}
     >
       <Meteors spreadWidth={2000} number={30} />
-      <h3 className="text-2xl">{props.title}</h3>
-      <p className="text-lg">{props.description}</p>
+      <h3 className="text-xl sm:text-2xl text-yellow-400 font-bold">{props.title}</h3>
+      <p className="text-md sm:text-lg font-medium sm:font-bold">{props.description}</p>
       {props.customField}
     </div>
   );

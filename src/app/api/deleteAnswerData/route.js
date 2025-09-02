@@ -11,7 +11,7 @@ import { Query } from "node-appwrite";
 export async function DELETE(request) {
   try {
     const body = await request.json();
-    const { answerId, authorId } = body;
+    const { answerId, authorId, answerList, VotesList } = body;
 
     const deleteAnswerComments = await databases.deleteDocuments(
       db,

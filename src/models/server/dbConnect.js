@@ -14,10 +14,10 @@ export default async function getOrCreateDB() {
     try {
       await databases.create(db, db);
       console.log("Database Created");
-      await createQuestionCollection();
       await createAnswerCollection();
       await createCommentCollection();
       await createVoteCollection();
+      await createQuestionCollection();
       console.log("Collections created");
       console.log("Database connected");
     } catch (error) {
