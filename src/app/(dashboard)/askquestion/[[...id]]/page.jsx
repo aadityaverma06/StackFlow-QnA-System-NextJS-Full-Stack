@@ -284,7 +284,7 @@ function askquestion() {
           repeatDelay={1}
           className="mask-radial-[800px_circle_at_center,white,transparent] inset-x-0 inset-y-[-30%] h-[200%] skew-y-12"
         />
-        <p className="text-lg absolute translate-y-[380%] bg-black">
+        <p className="text-xs xs:text-sm sm:text-base md:text-lg absolute text-center bottom-[10%] bg-black">
           © 2025 StackFlow QnA System. All rights reserved.
         </p>
       </div>

@@ -35,6 +35,6 @@ The Web App is inspired by the renowned StackOverFlow QnA System.
 npm run dev
 ```
 
-### 🌐 Using Render Link
+### 🌐 Using Vercel Link
 
 https://stack-flow-qn-a-system-next-js-full.vercel.app/
