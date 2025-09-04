@@ -28,6 +28,7 @@ The Web App is inspired by the renowned StackOverFlow QnA System.
 - Axios (For API Calls)
 
 ## Installation / Access
+Please use Navbar Links only to navigate between Pages, not the arrows on the Web Browser.
 
 ### 📦 On Local Machine
 
