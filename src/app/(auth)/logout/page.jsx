@@ -51,12 +51,13 @@ function logout() {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen gap-12">
       <h1 className="text-center border-4 rounded-xl p-8 border-gray-700 ">
-        <span className="text-6xl bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
+        <span className="text-5xl xs:text-6xl bg-gradient-to-r from-[#8E2DE2] to-[#4a00e0] bg-clip-text text-transparent font-bold">
           {isProcessing ? "Processing..." : heading}
         </span>
       </h1>
-      <h2 className="text-2xl">
-        You will be redirected to Home in {countdown > 1 ? `${countdown} Seconds` : `${countdown} Second`}
+      <h2 className="text-xl xs:text-2xl">
+        You will be redirected to Home in{" "}
+        {countdown > 1 ? `${countdown} Seconds` : `${countdown} Second`}
       </h2>
     </div>
   );
