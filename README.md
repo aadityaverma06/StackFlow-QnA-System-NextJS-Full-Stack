@@ -28,7 +28,12 @@ The Web App is inspired by the renowned StackOverFlow QnA System.
 - Axios (For API Calls)
 
 ## Installation / Access
-Please use Navbar Links only to navigate between Pages, not the arrows on the Web Browser.
+Please use Navbar Links only to navigate between Pages, not the arrows on the Web Browser. 
+### User1 login credentials for exploring the app
+```bash
+Login ID: user1@gmail.com
+Password: user1@123
+```
 
 ### 📦 On Local Machine
 
