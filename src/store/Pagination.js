@@ -27,7 +27,7 @@ const usePaginationStore = create((set) => ({
   votesForQuestion: null,
   setVotesForQuestion: (votesForQuestion) => set({ votesForQuestion }),
 
-  limit: 12,
+  limit: 5,
   switchPageForQuestions: false,
   setSwitchPageForQuestions: (switchPageForQuestions) =>
     set({ switchPageForQuestions }),

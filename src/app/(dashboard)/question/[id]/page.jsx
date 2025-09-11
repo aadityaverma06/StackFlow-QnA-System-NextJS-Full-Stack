@@ -620,7 +620,7 @@ function question() {
               </p>
               <p className="text-xs md:text-base col-start-2 row-start-2 ">
                 Rep:{" "}
-                <span className="text-purple-500">
+                <span className="text-xs md:text-base text-purple-500">
                   {questionAuthorReputation}
                 </span>
               </p>

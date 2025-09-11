@@ -340,7 +340,10 @@ function AnswerContainer({
           {authorName}
         </p>
         <p className="text-sm md:text-base col-start-2 row-start-2 ">
-          Rep: <span className="text-purple-500">{authorReputation}</span>
+          Rep:{" "}
+          <span className="text-xs md:text-base text-purple-500">
+            {authorReputation}
+          </span>
         </p>
       </div>
 
